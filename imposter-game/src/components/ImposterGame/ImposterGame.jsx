@@ -228,7 +228,8 @@ useEffect(() => {
           <div className={s.gameView}>
             <div className={s.phaseBadge}>💬 Discussion Phase</div>
             <div className={s.phaseHint}>
-              Take turns saying one word related to your clue - no long explanations! Keep going until the group is ready to vote.
+              Take turns saying one word related to your clue - no long explanations! <br />
+              Keep going until the group is ready to vote.
             </div>
             <button className={s.actionBtn} onClick={() => setPhase("voting")}>
               Start Voting →
