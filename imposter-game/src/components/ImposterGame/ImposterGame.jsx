@@ -14,6 +14,7 @@ export default function ImposterGame() {
   const [seen, setSeen] = useState([]);
   const [selectedCard, setSelectedCard] = useState(null);
   const [showManual, setShowManual] = useState(false);
+  const [suspect, setSuspect] = useState(null);
 
   const [musicOn, setMusicOn] = useState(true);
 const audioRef = useRef(null);
@@ -70,6 +71,7 @@ useEffect(() => {
     setFlipped([]);
     setSeen([]);
     setSelectedCard(null);
+    setSuspect(null);
     setPhase("cards");
   }, [playerNames, playerCount, selectedGenre]);
 
@@ -158,8 +160,11 @@ useEffect(() => {
               Start Game
             </button>
           </div>
-        ) : (
+        ) : phase === "cards" ? (
           <div className={s.gameView}>
+            <div className={s.phaseBadge}>🃏 Reveal Phase</div>
+            <div className={s.phaseHint}>Each player, tap your card privately to see your role.</div>
+
             {/* FULLSCREEN OVERLAY: Shows only when a card is selected */}
             {selectedCard !== null && (
               <div className={s.fullscreenOverlay} onClick={() => handleFlip(selectedCard)}>
@@ -186,8 +191,6 @@ useEffect(() => {
               </div>
             )}
 
-            {allSeen && <div className={s.allSeenBanner}>✓ Start Discussing!</div>}
-
             <div className={s.cardsGrid}>
               {gameData.players.map((name, i) => {
                 const isFlipped = flipped.includes(i);
@@ -213,9 +216,68 @@ useEffect(() => {
               })}
             </div>
 
-            <button className={s.resetBtn} onClick={() => setPhase("setup")}>
-              ← New Game
+            {allSeen && (
+              <button className={s.actionBtn} onClick={() => setPhase("discussion")}>
+                Start Discussion →
+              </button>
+            )}
+            <button className={s.resetBtn} onClick={() => setPhase("setup")}>← New Game</button>
+          </div>
+
+        ) : phase === "discussion" ? (
+          <div className={s.gameView}>
+            <div className={s.phaseBadge}>💬 Discussion Phase</div>
+            <div className={s.phaseHint}>
+              Take turns saying one word related to your clue - no long explanations! <br />
+              Keep going until the group is ready to vote.
+            </div>
+            <button className={s.actionBtn} onClick={() => setPhase("voting")}>
+              Start Voting →
             </button>
+            <button className={s.resetBtn} onClick={() => setPhase("setup")}>← New Game</button>
+          </div>
+
+        ) : phase === "voting" ? (
+          <div className={s.gameView}>
+            <div className={s.phaseBadge}>🗳️ Voting Phase</div>
+            <div className={s.phaseHint}>Who do you all think is the imposter? Select your suspect.</div>
+            <div className={s.voteGrid}>
+              {gameData.players.map((name, i) => (
+                <button
+                  key={i}
+                  className={`${s.voteCard} ${suspect === i ? s.voteCardSelected : ""}`}
+                  onClick={() => setSuspect(i)}
+                >
+                  {name}
+                </button>
+              ))}
+            </div>
+            <button
+              className={s.actionBtn}
+              disabled={suspect === null}
+              onClick={() => setPhase("result")}
+            >
+              Reveal Result →
+            </button>
+            <button className={s.resetBtn} onClick={() => setPhase("setup")}>← New Game</button>
+          </div>
+
+        ) : (
+          <div className={s.gameView}>
+            <div className={s.phaseBadge}>🏆 Result</div>
+            <div className={`${s.resultCard} ${suspect === gameData.imposterIndex ? s.verdictCaught : s.verdictMissed}`}>
+              <div className={s.verdictTitle}>
+                {suspect === gameData.imposterIndex ? "✓ Imposter Caught!" : "✗ Wrong Guess!"}
+              </div>
+              <div className={s.verdictDetail}>
+                {suspect === gameData.imposterIndex
+                  ? `${gameData.players[suspect]} was the imposter.`
+                  : `${gameData.players[gameData.imposterIndex]} was the real imposter!`}
+              </div>
+              <div className={s.resultWordLabel}>Secret Word</div>
+              <div className={s.resultWord}>{gameData.word}</div>
+            </div>
+            <button className={s.actionBtn} onClick={() => setPhase("setup")}>New Game</button>
           </div>
         )}
       </div>
