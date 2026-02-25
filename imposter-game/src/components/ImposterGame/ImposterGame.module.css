@@ -518,3 +518,48 @@
 .musicBtn:hover {
   transform: scale(1.05);
 }
+
+/* ─── Starter Banner ───────────────────────── */
+
+.starterBanner {
+  margin: 20px 0;
+  padding: 18px;
+  border-radius: 14px;
+  text-align: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 2px;
+  background: rgba(0, 255, 200, 0.08);
+  border: 1px solid rgba(0, 255, 200, 0.4);
+  color: #00ffd0;
+  text-shadow: 0 0 10px #00ffd0, 0 0 25px rgba(0,255,200,0.6);
+  animation: glowPulse 1.5s infinite alternate;
+}
+
+@keyframes glowPulse {
+  from {
+    box-shadow: 0 0 10px rgba(0,255,200,0.4);
+  }
+  to {
+    box-shadow: 0 0 25px rgba(0,255,200,0.8);
+  }
+}
+
+.rerollBtn {
+  margin-top: 12px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #00ffd0;
+  background: transparent;
+  color: #00ffd0;
+  cursor: pointer;
+  font-size: 13px;
+  letter-spacing: 1px;
+  transition: 0.2s ease;
+}
+
+.rerollBtn:hover {
+  background: #00ffd0;
+  color: #000;
+  box-shadow: 0 0 15px #00ffd0;
+}

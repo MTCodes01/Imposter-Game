@@ -89,6 +89,16 @@ useEffect(() => {
   const canStart = playerNames.slice(0, playerCount).every((n) => n.trim()) && selectedGenre;
   const allSeen = gameData && seen.length === gameData.players.length;
 
+  const [startingPlayerIndex, setStartingPlayerIndex] = useState(null);
+  const [showStarter, setShowStarter] = useState(false);
+
+  useEffect(() => {
+  if (allSeen && startingPlayerIndex === null) {
+    const randomIndex = Math.floor(Math.random() * gameData.players.length);
+    setStartingPlayerIndex(randomIndex);
+    setShowStarter(true);
+  }
+}, [allSeen, gameData, startingPlayerIndex]);
   return (
     <div className={s.app}>
       <div className={s.bgGrid} />
@@ -134,7 +144,21 @@ useEffect(() => {
                 ))}
               </div>
             </div>
-
+                {allSeen && <div className={s.allSeenBanner}>✓ Start Discussing!</div>}
+                {allSeen && showStarter && startingPlayerIndex !== null && (
+  <div className={s.starterBanner}>
+    ✨ {gameData.players[startingPlayerIndex]} starts the round!
+    <button
+      className={s.rerollBtn}
+      onClick={() => {
+        const newIndex = Math.floor(Math.random() * gameData.players.length);
+        setStartingPlayerIndex(newIndex);
+      }}
+    >
+      🔁 Re-roll
+    </button>
+  </div>
+)}
             <div className={s.card}>
               <div className={s.sectionLabel}>Choose Genre</div>
               <div className={s.genreGrid}>
@@ -188,37 +212,58 @@ useEffect(() => {
 
             {allSeen && <div className={s.allSeenBanner}>✓ Start Discussing!</div>}
 
-            <div className={s.cardsGrid}>
-              {gameData.players.map((name, i) => {
-                const isFlipped = flipped.includes(i);
-                const isSeen = seen.includes(i);
+{allSeen && showStarter && startingPlayerIndex !== null && (
+  <div className={s.starterBanner}>
+    ✨ {gameData.players[startingPlayerIndex]} starts the round!
+    <button
+      className={s.rerollBtn}
+      onClick={() => {
+        const newIndex = Math.floor(Math.random() * gameData.players.length);
+        setStartingPlayerIndex(newIndex);
+      }}
+    >
+      🔁 Re-roll
+    </button>
+  </div>
+)}
 
-                return (
-                  <div
-                    key={i}
-                    className={s.flipCard}
-                    onClick={() => !isSeen && handleFlip(i)}
-                  >
-                    <div className={`${s.flipCardInner} ${isFlipped ? s.flipped : ""}`}>
-                      <div className={s.flipCardFront}>
-                        {isSeen && !isFlipped && (
-                          <div className={s.seenOverlay}>Seen ✓</div>
-                        )}
-                        <span className={s.playerName}>{name}</span>
-                        <span className={s.tapHint}>Tap to reveal</span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+<div className={s.cardsGrid}>
+  {gameData.players.map((name, i) => {
+    const isFlipped = flipped.includes(i);
+    const isSeen = seen.includes(i);
 
-            <button className={s.resetBtn} onClick={() => setPhase("setup")}>
-              ← New Game
-            </button>
+    return (
+      <div
+        key={i}
+        className={s.flipCard}
+        onClick={() => !isSeen && handleFlip(i)}
+      >
+        <div className={`${s.flipCardInner} ${isFlipped ? s.flipped : ""}`}>
+          <div className={s.flipCardFront}>
+            {isSeen && !isFlipped && (
+              <div className={s.seenOverlay}>Seen ✓</div>
+            )}
+            <span className={s.playerName}>{name}</span>
+            <span className={s.tapHint}>Tap to reveal</span>
+          </div>
+        </div>
+      </div>
+    );
+  })}
+</div>
+<button
+  className={s.resetBtn}
+  onClick={() => {
+    setPhase("setup");
+    setStartingPlayerIndex(null);
+    setShowStarter(false);
+  }}
+>
+  ← New Game
+</button>
           </div>
         )}
-      </div>
-    </div>
+        </div>
+        </div>
   );
 }
