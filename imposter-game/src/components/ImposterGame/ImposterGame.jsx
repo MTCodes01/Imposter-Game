@@ -17,32 +17,32 @@ export default function ImposterGame() {
   const [suspect, setSuspect] = useState(null);
 
   const [musicOn, setMusicOn] = useState(true);
-const audioRef = useRef(null);
+  const audioRef = useRef(null);
 
-useEffect(() => {
-  const audio = new Audio(bgMusic);
-  audio.loop = true;
-  audio.volume = 0.5;
+  useEffect(() => {
+    const audio = new Audio(bgMusic);
+    audio.loop = true;
+    audio.volume = 0.5;
 
-  audioRef.current = audio;
+    audioRef.current = audio;
 
-  // Try autoplay immediately
-  audio.play().catch(() => {
-    // If autoplay blocked, start on first user interaction
-    const startMusic = () => {
-      audio.play();
-      document.removeEventListener("click", startMusic);
-      document.removeEventListener("touchstart", startMusic);
+    // Try autoplay immediately
+    audio.play().catch(() => {
+      // If autoplay blocked, start on first user interaction
+      const startMusic = () => {
+        audio.play();
+        document.removeEventListener("click", startMusic);
+        document.removeEventListener("touchstart", startMusic);
+      };
+
+      document.addEventListener("click", startMusic);
+      document.addEventListener("touchstart", startMusic);
+    });
+
+    return () => {
+      audio.pause();
     };
-
-    document.addEventListener("click", startMusic);
-    document.addEventListener("touchstart", startMusic);
-  });
-
-  return () => {
-    audio.pause();
-  };
-}, []);
+  }, []);
 
   const toggleMusic = () => {
     setMusicOn((prev) => !prev);
@@ -73,6 +73,8 @@ useEffect(() => {
     setSelectedCard(null);
     setSuspect(null);
     setPhase("cards");
+    setStartingPlayerIndex(null);
+    setShowStarter(false);
   }, [playerNames, playerCount, selectedGenre]);
 
   const handleFlip = (i) => {
@@ -91,6 +93,16 @@ useEffect(() => {
   const canStart = playerNames.slice(0, playerCount).every((n) => n.trim()) && selectedGenre;
   const allSeen = gameData && seen.length === gameData.players.length;
 
+  const [startingPlayerIndex, setStartingPlayerIndex] = useState(null);
+  const [showStarter, setShowStarter] = useState(false);
+
+  useEffect(() => {
+    if (allSeen && startingPlayerIndex === null) {
+      const randomIndex = Math.floor(Math.random() * gameData.players.length);
+      setStartingPlayerIndex(randomIndex);
+      setShowStarter(true);
+    }
+  }, [allSeen, gameData, startingPlayerIndex]);
   return (
     <div className={s.app}>
       <div className={s.bgGrid} />
@@ -136,7 +148,6 @@ useEffect(() => {
                 ))}
               </div>
             </div>
-
             <div className={s.card}>
               <div className={s.sectionLabel}>Choose Genre</div>
               <div className={s.genreGrid}>
@@ -191,6 +202,34 @@ useEffect(() => {
               </div>
             )}
 
+            {allSeen && (
+              <>
+                <div className={s.allSeenBanner}>✓ Everyone has seen their roles!</div>
+
+                {showStarter && startingPlayerIndex !== null && (
+                  <div className={s.starterBanner}>
+                    ✨ {gameData.players[startingPlayerIndex]} starts the round!
+                    <button
+                      className={s.rerollBtn}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const newIndex = Math.floor(Math.random() * gameData.players.length);
+                        setStartingPlayerIndex(newIndex);
+                      }}
+                    >
+                      🔁 Re-roll
+                    </button>
+                  </div>
+                )}
+                <button
+                  className={s.actionBtn}
+                  onClick={() => setPhase("discussion")}
+                >
+                  Start Discussion →
+                </button>
+              </>
+            )}
+
             <div className={s.cardsGrid}>
               {gameData.players.map((name, i) => {
                 const isFlipped = flipped.includes(i);
@@ -216,68 +255,39 @@ useEffect(() => {
               })}
             </div>
 
-            {allSeen && (
-              <button className={s.actionBtn} onClick={() => setPhase("discussion")}>
-                Start Discussion →
-              </button>
-            )}
-            <button className={s.resetBtn} onClick={() => setPhase("setup")}>← New Game</button>
-          </div>
-
-        ) : phase === "discussion" ? (
-          <div className={s.gameView}>
-            <div className={s.phaseBadge}>💬 Discussion Phase</div>
-            <div className={s.phaseHint}>
-              Take turns saying one word related to your clue - no long explanations! <br />
-              Keep going until the group is ready to vote.
-            </div>
-            <button className={s.actionBtn} onClick={() => setPhase("voting")}>
-              Start Voting →
-            </button>
-            <button className={s.resetBtn} onClick={() => setPhase("setup")}>← New Game</button>
-          </div>
-
-        ) : phase === "voting" ? (
-          <div className={s.gameView}>
-            <div className={s.phaseBadge}>🗳️ Voting Phase</div>
-            <div className={s.phaseHint}>Who do you all think is the imposter? Select your suspect.</div>
-            <div className={s.voteGrid}>
-              {gameData.players.map((name, i) => (
-                <button
-                  key={i}
-                  className={`${s.voteCard} ${suspect === i ? s.voteCardSelected : ""}`}
-                  onClick={() => setSuspect(i)}
-                >
-                  {name}
-                </button>
-              ))}
-            </div>
             <button
-              className={s.actionBtn}
-              disabled={suspect === null}
-              onClick={() => setPhase("result")}
+              className={s.resetBtn}
+              onClick={() => {
+                setPhase("setup");
+                setStartingPlayerIndex(null);
+                setShowStarter(false);
+              }}
             >
-              Reveal Result →
+              ← New Game
             </button>
-            <button className={s.resetBtn} onClick={() => setPhase("setup")}>← New Game</button>
           </div>
-
         ) : (
           <div className={s.gameView}>
-            <div className={s.phaseBadge}>🏆 Result</div>
-            <div className={`${s.resultCard} ${suspect === gameData.imposterIndex ? s.verdictCaught : s.verdictMissed}`}>
-              <div className={s.verdictTitle}>
-                {suspect === gameData.imposterIndex ? "✓ Imposter Caught!" : "✗ Wrong Guess!"}
+            <div className={s.phaseBadge}>💬 Discussion Phase</div>
+
+            {showStarter && startingPlayerIndex !== null && (
+              <div className={s.starterBanner}>
+                ✨ {gameData.players[startingPlayerIndex]} starts the round!
               </div>
-              <div className={s.verdictDetail}>
-                {suspect === gameData.imposterIndex
-                  ? `${gameData.players[suspect]} was the imposter.`
-                  : `${gameData.players[gameData.imposterIndex]} was the real imposter!`}
-              </div>
-              <div className={s.resultWordLabel}>Secret Word</div>
-              <div className={s.resultWord}>{gameData.word}</div>
-            </div>
-            <button className={s.actionBtn} onClick={() => setPhase("setup")}>New Game</button>
+            )}
+
+            <div className={s.phaseHint}>Talk to find the imposter!</div>
+
+            <button
+              className={s.resetBtn}
+              onClick={() => {
+                setPhase("setup");
+                setStartingPlayerIndex(null);
+                setShowStarter(false);
+              }}
+            >
+              ← Home
+            </button>
           </div>
         )}
       </div>
