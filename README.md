@@ -48,25 +48,55 @@ After discussion, everyone votes for who they think the Imposter is!
 
 ---
 
+## 🕹️ Game Phases
+
+The game flows through three distinct phases, ensuring a smooth and engaging experience for all players.
+
+### 1️⃣ Setup Phase
+* **Player Configuration**: Add 3–10 players and customize their names.
+* **Genre Selection**: Choose from 8+ curated categories including Food, Movies, Animals, and more.
+* **Game Options**: Toggle advanced features like **Imposter Hints** or browse the built-in **Instruction Manual**.
+
+### 2️⃣ Reveal Phase
+* **Secret Roles**: Players pass the device and tap their cards one by one to reveal their role.
+* **The Word**: Commoners see the secret word; the Imposter sees "IMPOSTER" (and a strategic hint if enabled).
+* **Privacy First**: High-contrast, fullscreen overlays prevent accidental peeking.
+
+### 3️⃣ Discussion Phase
+* **Starting Player**: The game automatically selects a random player to "start the round" to break the ice (with a **Re-roll** option if needed).
+* **The Hunt**: Players describe their word without being too obvious. The Imposter tries to blend in by interpreting clues.
+* **The Vote**: Once the tension peaks, the group votes to eliminate who they think is the Imposter.
+
+---
+
 ## ✨ Features
 
-### 🔒 Privacy-First Gameplay
+### 🎧 Ambient Soundscape
+Features dynamic background music with a convenient toggle control directly on the home screen to set the perfect mood for intrigue.
 
+### 💡 Imposter Strategy (Hints)
+Enable **Imposter Hints** in the setup to give the Imposter a fighting chance. Hints include:
+* **Starting Letter**: "Starts with P..."
+* **Word Length**: "The word has 5 letters..."
+
+### 🎲 Automated Starter
+No more awkward silences! The game randomly picks who starts the discussion round, ensuring every game begins with a spark.
+
+### 📖 In-Game Manual
+Accessible instruction manual available anytime during setup, making it easy for new players to jump right in.
+
+### 🔒 Privacy-First Gameplay
 Fullscreen overlays ensure no one else sees your role while revealing your card.
 
 ### 🌌 Modern Cyberpunk UI
-
-* Dark theme
-* Neon glow accents
-* Smooth 3D card-flip animations
+* **Design**: Sleek dark theme with neon glow accents.
+* **Interactions**: Smooth 3D card-flip animations and responsive tactile feedback.
 
 ### 📱 Mobile-Optimized
+Built for a single phone passed around the room — no accounts, downloads, or internet required during play.
 
-Built for a single phone passed around the room — no accounts or downloads needed.
-
-### 🎲 Custom Word Banks
-
-Includes **8 different genres** with curated word lists for replayability.
+### 🎲 Diverse Word Banks
+Includes extensive lists across multiple genres, curated for maximum replayability and fun.
 
 ---
 
