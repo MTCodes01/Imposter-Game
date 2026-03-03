@@ -30,6 +30,7 @@ export default function ImposterGame() {
   const [showHint,setShowHint]=useState(false);
   const [musicOn, setMusicOn] = useState(true);
   const audioRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     const audio = new Audio(bgMusic);
@@ -132,6 +133,22 @@ export default function ImposterGame() {
   const [startingPlayerIndex, setStartingPlayerIndex] = useState(null);
   const [showStarter, setShowStarter] = useState(false);
 
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target.result;
+      setCustomWords(content);
+    };
+    reader.readAsText(file);
+  };
+
+  const triggerFileUpload = () => {
+    fileInputRef.current?.click();
+  };
+
   useEffect(() => {
     if (allSeen && startingPlayerIndex === null) {
       const randomIndex = Math.floor(Math.random() * gameData.players.length);
@@ -215,6 +232,18 @@ export default function ImposterGame() {
                     onChange={(e) => setCustomTopic(e.target.value)}
                   />
                   <div className={s.sectionLabel} style={{ marginTop: "20px" }}>Custom Words</div>
+                  <div className={s.customWordsHeader}>
+                    <button className={s.uploadBtn} onClick={triggerFileUpload}>
+                      📁 Upload File (.txt, .csv)
+                    </button>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileUpload}
+                      accept=".txt,.csv"
+                      style={{ display: "none" }}
+                    />
+                  </div>
                   <textarea
                     className={s.textArea}
                     placeholder="Enter words separated by space or comma (min 3)"
